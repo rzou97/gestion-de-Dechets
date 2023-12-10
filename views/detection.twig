@@ -1,0 +1,72 @@
+<html>
+<head>
+    
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Detection Dechets</h1>
+
+    <form id="dechetsForm" action="/dechet/ajout" method="post">
+        <label for="user">User:</label>
+        <input type="text" id="user" name="user" required>
+
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" required>
+
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" required>
+
+        <label for="typedechets">Type of Waste:</label>
+        <input type="text" id="typedechets" name="typedechets" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+         const socket = io.connect();
+   socket.on('msg', function (data) {
+      console.log(data);
+   });
+
+
+
+        document.getElementById('dechetsForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const user = document.getElementById('user').value;
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const typedechets = document.getElementById('typedechets').value;
+
+          
+            fetch('/dechet/ajout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user,
+                    latitude,
+                    longitude,
+                    typedechets,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Optionally handle the response or update the UI
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle errors if needed
+            });
+        });
+
+      
+        socket.on('nouvelleDetection', (data) => {
+            console.log('Nouvelle détection reçue:', data);
+            
+        });
+    </script>
+</body>
+</html>
